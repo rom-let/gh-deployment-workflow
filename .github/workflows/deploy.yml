@@ -6,39 +6,42 @@ on:
   # Triggers the workflow on push only when index.html is affected
   push:
     branches: [ "main" ]
-    path: ./index.html
+    path: [ "./index.html" ]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency: 
+  group: ci-cd-${{github.ref}}
+  cancel-in-progress: false
+
+
 jobs:
   # This workflow contains a single job called "build-n-deploy"
   build-n-deploy:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # avoid concurrency in the same job
-    concurrency: ci-cd-${{github.ref}}
-
-#    needs: build
-
-    permissions:
-          pages: write
-          id-token: write
-   # enviroment: 
-    #      name: github-pages
-     #     url: ${{steps.deployment.output.page_url}} # really not sure about that one
-
-
-
+    environment: 
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: build
-        
+      - name: checkout 
         uses: actions/checkout@v4
+      
+      - name: setup
+        uses: actions/configure-pages@v5
 
+      - name: upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with: 
+          path: '.'
 
       # deploy the site to pages
       - name: deploy 
-        
-        
-            
         id: deployment
         uses: actions/deploy-pages@v4
         
