@@ -14,6 +14,18 @@ jobs:
     runs-on: ubuntu-latest
     # avoid concurrency in the same job
     concurrency: ci-cd-${{github.ref}}
+
+    needs: build
+
+    permissions:
+          pages: write
+          id-token: write
+    enviroment: 
+          name: github-pages
+          url: ${{steps.deployment.output.page_url}} # really not sure about that one
+
+
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -25,16 +37,8 @@ jobs:
       # deploy the site to pages
       - name: deploy 
         
-        needs: build
         
-        permissions:
-          pages: write
-          id-token: write
-        
-        enviroment: 
-          name: github-pages
-          url: ${{steps.deployment.output.page_url}} # really not sure about that one
-        
+            
         id: deployment
         uses: action/deploy-pages@v4
         
