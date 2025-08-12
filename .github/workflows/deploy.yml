@@ -15,7 +15,7 @@ jobs:
     # avoid concurrency in the same job
     concurrency: ci-cd-${{github.ref}}
 
-    needs: build
+#    needs: build
 
     permissions:
           pages: write
